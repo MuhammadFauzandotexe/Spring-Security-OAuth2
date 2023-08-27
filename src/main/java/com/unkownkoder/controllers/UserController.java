@@ -1,6 +1,5 @@
-package com.unknow.AuthBackEnd.Controller;
+package com.unkownkoder.controllers;
 
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,9 +9,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/user")
 @CrossOrigin("*")
 public class UserController {
+
     @GetMapping("/")
     public String helloUserController(){
-        return "USer access level";
+        return "User access level";
     }
-
+    
 }

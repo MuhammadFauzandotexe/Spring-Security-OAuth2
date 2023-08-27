@@ -1,10 +1,10 @@
-package com.unknow.AuthBackEnd;
+package com.unkownkoder;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class AuthBackEndApplicationTests {
+class AuthenticatedBackendApplicationTests {
 
 	@Test
 	void contextLoads() {
