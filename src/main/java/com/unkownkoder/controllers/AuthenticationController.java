@@ -1,5 +1,6 @@
 package com.unkownkoder.controllers;
 
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,10 +16,10 @@ import com.unkownkoder.services.AuthenticationService;
 @RestController
 @RequestMapping("/auth")
 @CrossOrigin("*")
+@AllArgsConstructor
 public class AuthenticationController {
 
-    @Autowired
-    private AuthenticationService authenticationService;
+    private final AuthenticationService authenticationService;
 
     @PostMapping("/register")
     public ApplicationUser registerUser(@RequestBody RegistrationDTO body){

@@ -3,7 +3,7 @@ package com.unkownkoder.services;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -11,7 +11,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import com.unkownkoder.models.ApplicationUser;
 import com.unkownkoder.models.LoginResponseDTO;
 import com.unkownkoder.models.Role;
@@ -20,22 +19,22 @@ import com.unkownkoder.repository.UserRepository;
 
 @Service
 @Transactional
+@AllArgsConstructor
 public class AuthenticationService {
 
-    @Autowired
-    private UserRepository userRepository;
 
-    @Autowired
-    private RoleRepository roleRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final RoleRepository roleRepository;
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
 
-    @Autowired
-    private TokenService tokenService;
+    private final PasswordEncoder passwordEncoder;
+
+
+    private final AuthenticationManager authenticationManager;
+
+
+    private final TokenService tokenService;
 
     public ApplicationUser registerUser(String username, String password){
 
