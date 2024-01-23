@@ -1,5 +1,6 @@
 package com.unkownkoder.configuration;
 
+import com.unkownkoder.utils.rsa.RSAKeyProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -24,8 +25,6 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
-import com.unkownkoder.utils.RSAKeyProperties;
-
 @Configuration
 public class SecurityConfiguration {
 
@@ -51,19 +50,19 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         http
-            .csrf(csrf -> csrf.disable())
-            .authorizeHttpRequests(auth -> {
-                auth.antMatchers("/auth/**").permitAll();
-                auth.antMatchers("/admin/**").hasRole("ADMIN");
-                auth.antMatchers("/user/**").hasAnyRole("ADMIN", "USER");
-                auth.anyRequest().authenticated();
-            });
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth -> {
+                    auth.antMatchers("/auth/**").permitAll();
+                    auth.antMatchers("/admin/**").hasRole("ADMIN");
+                    auth.antMatchers("/user/**").hasAnyRole("ADMIN", "USER");
+                    auth.anyRequest().authenticated();
+                });
         http.oauth2ResourceServer()
                 .jwt()
                 .jwtAuthenticationConverter(jwtAuthenticationConverter());
         http.sessionManagement(
                 session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            );
+        );
         return http.build();
     }
 
@@ -88,5 +87,5 @@ public class SecurityConfiguration {
         jwtConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
         return jwtConverter;
     }
-    
+
 }

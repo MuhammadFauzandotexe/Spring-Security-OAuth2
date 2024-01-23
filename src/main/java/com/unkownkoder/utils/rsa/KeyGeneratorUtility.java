@@ -2,6 +2,8 @@ package com.unkownkoder.utils;
 
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 
 public class KeyGeneratorUtility {
 
@@ -19,5 +21,4 @@ public class KeyGeneratorUtility {
 
         return keyPair;
     }
-    
 }
