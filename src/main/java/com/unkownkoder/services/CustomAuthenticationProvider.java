@@ -40,25 +40,17 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         String password = authentication.getCredentials().toString();
         log.info(username);
         log.info(password);
-        Filter filter = new EqualsFilter("uid", authentication.getName());
-        Boolean authenticate = ldapTemplate.authenticate(LdapUtils.emptyLdapName(), filter.encode(),authentication.getCredentials().toString());
-
-
+        Filter filter = new EqualsFilter("cn", authentication.getName());
+        Boolean authenticate = ldapTemplate.authenticate(LdapUtils.emptyLdapName(), filter.encode(), authentication.getCredentials().toString());
         log.info(String.valueOf(authenticate));
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-
-
-
-        if (userDetails == null) {
-            throw new UsernameNotFoundException("User not found");
+        if(!authenticate){
+            throw new  BadCredentialsException("");
         }
-        if (!authenticate){
-            Authentication authenticated = new UsernamePasswordAuthenticationToken(
-                    userDetails, password, userDetails.getAuthorities());
-            return authenticated;
-        }else {
-            throw new UsernameNotFoundException("user not found");
-        }
+
+        Authentication authenticated = new UsernamePasswordAuthenticationToken(
+                userDetails, password, userDetails.getAuthorities());
+        return authenticated;
     }
     @Override
     public boolean supports(Class<?> authentication) {
