@@ -1,18 +1,30 @@
 package com.unkownkoder.configuration;
 
 import com.unkownkoder.services.CustomAuthenticationProvider;
+import com.unkownkoder.services.OpenLdapAuthenticationProvider;
 import com.unkownkoder.utils.rsa.RSAKeyProperties;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.ldap.core.LdapTemplate;
+import org.springframework.ldap.core.support.BaseLdapPathContextSource;
+import org.springframework.ldap.core.support.LdapContextSource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.config.ldap.LdapBindAuthenticationManagerFactory;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.ldap.authentication.LdapAuthenticationProvider;
+import org.springframework.security.ldap.search.FilterBasedLdapUserSearch;
+import org.springframework.security.ldap.search.LdapUserSearch;
+import org.springframework.security.ldap.userdetails.LdapUserDetailsService;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
@@ -28,28 +40,25 @@ import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 @Configuration
-//@RequiredArgsConstructor
+@EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfiguration {
-
     private final RSAKeyProperties keys;
-    @Autowired
-    private UserDetailsService userDetailsService;
-
-    public SecurityConfiguration(RSAKeyProperties keys){
-        this.keys = keys;
-    }
+    private final UserDetailsService userDetailsService;
+    private final LdapAuthenticationProvider provider;
+    private final LdapContextSource contextSource;
+    private final LdapTemplate ldapTemplate;
 
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
-
     @Bean
-    public AuthenticationManager authManager(UserDetailsService detailsService){
-        AuthenticationProvider daoProvider = new CustomAuthenticationProvider(userDetailsService);
-        return new ProviderManager(daoProvider);
+    AuthenticationManager authenticationManager(){
+        AuthenticationProvider authenticationProvider = new CustomAuthenticationProvider(userDetailsService,provider,contextSource,ldapTemplate);
+//        AuthenticationProvider authenticationProvider = new OpenLdapAuthenticationProvider(contextSource,ldapTemplate);
+        return new ProviderManager(authenticationProvider);
     }
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         http

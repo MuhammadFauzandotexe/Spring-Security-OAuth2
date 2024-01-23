@@ -1,26 +1,25 @@
 package com.unkownkoder.controllers;
 
-import com.unkownkoder.repository.UserLdapRepository;
+import com.unkownkoder.data.LoginResponseDTO;
+import com.unkownkoder.data.RegistrationDTO;
+import com.unkownkoder.models.*;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.web.bind.annotation.*;
-
-import com.unkownkoder.models.ApplicationUser;
-import com.unkownkoder.models.LoginResponseDTO;
-import com.unkownkoder.models.RegistrationDTO;
 import com.unkownkoder.services.AuthenticationService;
 
 @RestController
 @RequestMapping("/auth")
 @CrossOrigin("*")
 @AllArgsConstructor
+@Slf4j
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
-    private UserLdapRepository userLdapRepository;
+    private final LdapTemplate ldapTemplate;
     @PostMapping("/register")
-    public ApplicationUser registerUser(@RequestBody RegistrationDTO body){
+    public User registerUser(@RequestBody RegistrationDTO body){
         return authenticationService.registerUser(body.getUsername(), body.getPassword());
     }
 
@@ -29,8 +28,9 @@ public class AuthenticationController {
         return authenticationService.loginUser(body.getUsername(), body.getPassword());
     }
 
-    @GetMapping("/get-ldap-user")
-    private String getLdap(){
-        userLdapRepository.l
-    }
+
+
+
+
+
 }

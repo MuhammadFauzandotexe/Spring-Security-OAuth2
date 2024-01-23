@@ -1,57 +1,67 @@
 package com.unkownkoder.services;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ldap.core.LdapTemplate;
+import org.springframework.ldap.core.support.LdapContextSource;
+import org.springframework.ldap.filter.EqualsFilter;
+import org.springframework.ldap.filter.Filter;
+import org.springframework.ldap.support.LdapUtils;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.ldap.authentication.LdapAuthenticationProvider;
+import org.springframework.security.ldap.userdetails.LdapUserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.springframework.security.ldap.userdetails.LdapUserDetailsService;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class CustomAuthenticationProvider implements AuthenticationProvider {
-//    @Resource
-//    UserDetailsService userDetailsService;
-    @Autowired
     private final UserDetailsService userDetailsService;
-    public CustomAuthenticationProvider(UserDetailsService userDetailsService) {
-        this.userDetailsService = userDetailsService;
-    }
+    private final LdapAuthenticationProvider ldapAuthenticationProvider;
+    private final LdapContextSource contextSource;
+    private final LdapTemplate ldapTemplate;
+
+
+
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String username = authentication.getName();
         String password = authentication.getCredentials().toString();
-        // Perform your custom authentication logic here
-        // Retrieve user details from userDetailsService and validate the credentials
-        // You can throw AuthenticationException if authentication fails
-        // Example: retrieving user details by username from UserDetailsService
-        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-        log.info(userDetails.getPassword());
-        log.info(userDetails.getUsername());
+        log.info(username);
         log.info(password);
+        Filter filter = new EqualsFilter("uid", authentication.getName());
+        Boolean authenticate = ldapTemplate.authenticate(LdapUtils.emptyLdapName(), filter.encode(),authentication.getCredentials().toString());
+
+
+        log.info(String.valueOf(authenticate));
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
+
+
         if (userDetails == null) {
             throw new UsernameNotFoundException("User not found");
         }
-
-//        // Example: validating credentials
-//        if (!password.equals(userDetails.getPassword())) {
-//            throw new AuthenticationException("Invalid credentials") {};
-//        }
-
-
-        // Create a fully authenticated Authentication object
-        Authentication authenticated = new UsernamePasswordAuthenticationToken(
-                userDetails, password, userDetails.getAuthorities());
-        return authenticated;
+        if (!authenticate){
+            Authentication authenticated = new UsernamePasswordAuthenticationToken(
+                    userDetails, password, userDetails.getAuthorities());
+            return authenticated;
+        }else {
+            throw new UsernameNotFoundException("user not found");
+        }
     }
     @Override
     public boolean supports(Class<?> authentication) {
-        // Return true if this AuthenticationProvider supports the provided authentication class
         return authentication.equals(UsernamePasswordAuthenticationToken.class);
     }
 }

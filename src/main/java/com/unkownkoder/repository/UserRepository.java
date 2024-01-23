@@ -4,9 +4,9 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.unkownkoder.models.ApplicationUser;
+import com.unkownkoder.models.User;
 
 @Repository
-public interface UserRepository extends JpaRepository<ApplicationUser, Integer> {
-	Optional<ApplicationUser> findByUsername(String username);
+public interface UserRepository extends JpaRepository<User, Integer> {
+	Optional<User> findByUsername(String username);
 }
