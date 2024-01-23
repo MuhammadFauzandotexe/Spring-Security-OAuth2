@@ -1,5 +1,7 @@
 package com.unkownkoder.services;
 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -8,8 +10,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+
+@Slf4j
 @Component
 public class CustomAuthenticationProvider implements AuthenticationProvider {
+//    @Resource
+//    UserDetailsService userDetailsService;
+    @Autowired
     private final UserDetailsService userDetailsService;
     public CustomAuthenticationProvider(UserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
@@ -23,13 +31,19 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         // You can throw AuthenticationException if authentication fails
         // Example: retrieving user details by username from UserDetailsService
         UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        log.info(userDetails.getPassword());
+        log.info(userDetails.getUsername());
+        log.info(password);
         if (userDetails == null) {
             throw new UsernameNotFoundException("User not found");
         }
-        // Example: validating credentials
-        if (!password.equals(userDetails.getPassword())) {
-            throw new AuthenticationException("Invalid credentials") {};
-        }
+
+//        // Example: validating credentials
+//        if (!password.equals(userDetails.getPassword())) {
+//            throw new AuthenticationException("Invalid credentials") {};
+//        }
+
+
         // Create a fully authenticated Authentication object
         Authentication authenticated = new UsernamePasswordAuthenticationToken(
                 userDetails, password, userDetails.getAuthorities());

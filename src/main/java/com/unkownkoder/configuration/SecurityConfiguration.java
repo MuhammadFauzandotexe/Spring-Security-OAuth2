@@ -1,11 +1,13 @@
 package com.unkownkoder.configuration;
 
+import com.unkownkoder.services.CustomAuthenticationProvider;
 import com.unkownkoder.utils.rsa.RSAKeyProperties;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -26,9 +28,12 @@ import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 @Configuration
+//@RequiredArgsConstructor
 public class SecurityConfiguration {
 
     private final RSAKeyProperties keys;
+    @Autowired
+    private UserDetailsService userDetailsService;
 
     public SecurityConfiguration(RSAKeyProperties keys){
         this.keys = keys;
@@ -41,9 +46,7 @@ public class SecurityConfiguration {
 
     @Bean
     public AuthenticationManager authManager(UserDetailsService detailsService){
-        DaoAuthenticationProvider daoProvider = new DaoAuthenticationProvider();
-        daoProvider.setUserDetailsService(detailsService);
-        daoProvider.setPasswordEncoder(passwordEncoder());
+        AuthenticationProvider daoProvider = new CustomAuthenticationProvider(userDetailsService);
         return new ProviderManager(daoProvider);
     }
 

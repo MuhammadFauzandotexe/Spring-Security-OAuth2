@@ -1,9 +1,10 @@
-package com.unkownkoder.utils;
+package com.unkownkoder.utils.rsa;
 
 import java.security.KeyPair;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 
+import com.unkownkoder.utils.rsa.KeyGeneratorUtility;
 import org.springframework.stereotype.Component;
 
 @Component

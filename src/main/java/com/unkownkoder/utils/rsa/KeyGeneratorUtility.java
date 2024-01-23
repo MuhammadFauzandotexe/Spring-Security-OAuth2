@@ -1,10 +1,7 @@
-package com.unkownkoder.utils;
+package com.unkownkoder.utils.rsa;
 
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-
 public class KeyGeneratorUtility {
 
     public static KeyPair generateRsaKey(){

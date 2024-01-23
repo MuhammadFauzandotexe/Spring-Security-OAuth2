@@ -1,4 +1,4 @@
-package com.unkownkoder.utils;
+package com.unkownkoder.utils.rsa;
 import javax.crypto.Cipher;
 import java.security.PrivateKey;
 import java.security.PublicKey;
